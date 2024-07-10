@@ -1,5 +1,6 @@
 import express, { Express } from "express";
 import morgan from "morgan";
+import authRouter from "./routes/authRoutes";
 
 const app: Express = express();
 
@@ -14,5 +15,7 @@ app.use(morgan("dev"));
 // Routing
 const apiVersion: string = "1";
 const apiPrefix: string = `api/v${apiVersion}`;
+
+app.use(`/${apiPrefix}`, authRouter);
 
 export default app;
