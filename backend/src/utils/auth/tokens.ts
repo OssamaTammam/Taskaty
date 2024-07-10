@@ -1,12 +1,29 @@
+import { Response } from "express";
 import { sign } from "jsonwebtoken";
 
-const signJWT = async (userId: number) =>
+/**
+ * Sign JWT and return it
+ *
+ * @param userId
+ * @returns signed JWT
+ */
+const signJWT = async (userId: number): Promise<string> =>
   await sign({ userId }, process.env.JWT_SECRET || "", {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-export const createJWT = async (userId: number, res: Response) => {
-  const token = await signJWT(userId);
+/**
+ * create JWT and store it in a cookie and return the token
+ *
+ * @param userId
+ * @param res
+ * @returns JWT
+ */
+export const createJWT = async (
+  userId: number,
+  res: Response,
+): Promise<string> => {
+  const token: string = await signJWT(userId);
   const cookieExpirationDuration = process.env.JWT_COOKIE_EXPIRES_IN || "30";
   const cookieOptions = {
     expires: new Date(

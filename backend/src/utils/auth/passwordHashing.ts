@@ -10,11 +10,11 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const verifyPassword = async (
-  hash: string,
-  correctHash: string,
+  plainPassword: string,
+  hashedPassword: string,
 ): Promise<boolean> => {
   try {
-    return await verify(hash, correctHash);
+    return await verify(hashedPassword, plainPassword);
   } catch (err) {
     throw new Error("Error verifying password\n" + err);
   }
