@@ -155,3 +155,19 @@ export const logIn = async (
     next(err);
   }
 };
+
+/**
+ * Logs out by setting a dummy value to the jwt
+ *
+ * @param req
+ * @param res
+ * @returns {void}
+ */
+export const logOut = (req: Request, res: Response): void => {
+  res.cookie("jwt", "logged out", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: false,
+  });
+
+  return resGenerator(res, 200, "success", "logged out");
+};
