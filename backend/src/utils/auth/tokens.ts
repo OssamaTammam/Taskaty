@@ -1,5 +1,9 @@
 import { Response } from "express";
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
+
+interface JwtPayload {
+  userId: number;
+}
 
 /**
  * Sign JWT and return it
@@ -36,4 +40,14 @@ export const createJWT = async (
 
   (res as any).cookie("jwt", token, cookieOptions);
   return token;
+};
+
+export const verifyJWT = (token: string): JwtPayload | null => {
+  try {
+    const decoded = verify(token, process.env.JWT_SECRET || "") as JwtPayload;
+    return decoded;
+  } catch (err) {
+    console.error("Error verifying token:", err);
+    return null;
+  }
 };
