@@ -9,10 +9,7 @@ import resGenerator from "../utils/resGenerator";
 import { User } from "@prisma/client";
 import { hashPassword, verifyPassword } from "../utils/auth/passwordHashing";
 import { createJWT, verifyJWT } from "../utils/auth/tokens";
-
-export interface AuthenticatedRequest extends Request {
-  user?: User | null;
-}
+import authenticateRequest from "../middleware/authenticateRequest";
 
 /**
  * @param email
@@ -228,7 +225,7 @@ export const logOut = (
  * @returns {Promise<void>}
  */
 export const protectRoute = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
@@ -247,15 +244,19 @@ export const protectRoute = async (
       return resGenerator(res, 400, "fail", "Invalid token");
     }
 
-    const userId = decoded.userId;
+    const userId: number = decoded.userId;
 
-    const user = await prisma.user.findFirst({
+    const user: User | null = await prisma.user.findFirst({
       where: {
         id: userId,
       },
     });
 
-    req.user = user;
+    if (!user) {
+      return resGenerator(res, 400, "fail", "No logged in user");
+    }
+
+    authenticateRequest(user);
 
     next();
   } catch (err) {
