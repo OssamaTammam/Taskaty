@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { sign, verify } from "jsonwebtoken";
+import { Jwt, sign, verify } from "jsonwebtoken";
 
 interface JwtPayload {
   userId: number;
@@ -28,7 +28,8 @@ export const createJWT = async (
   res: Response,
 ): Promise<string> => {
   const token: string = await signJWT(userId);
-  const cookieExpirationDuration = process.env.JWT_COOKIE_EXPIRES_IN || "30";
+  const cookieExpirationDuration: string =
+    process.env.JWT_COOKIE_EXPIRES_IN || "30";
   const cookieOptions = {
     expires: new Date(
       Date.now() + parseInt(cookieExpirationDuration, 10) * 24 * 60 * 60 * 1000,
@@ -42,12 +43,18 @@ export const createJWT = async (
   return token;
 };
 
+/**
+ * Verify token
+ *
+ * @param token
+ * @returns {JwtPayload} Payload containing id decoded using secret
+ */
 export const verifyJWT = (token: string): JwtPayload | null => {
   try {
     const decoded = verify(token, process.env.JWT_SECRET || "") as JwtPayload;
     return decoded;
   } catch (err) {
-    console.error("Error verifying token:", err);
+    console.error("Error verifying token\n", err);
     return null;
   }
 };
