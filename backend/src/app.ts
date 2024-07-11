@@ -4,6 +4,7 @@ import authRouter from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 import todoRouter from "./routes/todoRoutes";
 import journalRouter from "./routes/journalRoutes";
+import dayRouter from "./routes/dayRoutes";
 
 const app: Express = express();
 
@@ -25,5 +26,6 @@ const apiPrefix: string = `api/v${apiVersion}`;
 app.use(`/${apiPrefix}`, authRouter);
 app.use(`/${apiPrefix}/todo`, todoRouter);
 app.use(`/${apiPrefix}/journal`, journalRouter);
+app.use(`/${apiPrefix}/day`, dayRouter);
 
 export default app;
