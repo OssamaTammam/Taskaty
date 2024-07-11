@@ -3,6 +3,7 @@ import morgan from "morgan";
 import authRouter from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 import todoRouter from "./routes/todoRoutes";
+import journalRouter from "./routes/journalRoutes";
 
 const app: Express = express();
 
@@ -23,5 +24,6 @@ const apiPrefix: string = `api/v${apiVersion}`;
 
 app.use(`/${apiPrefix}`, authRouter);
 app.use(`/${apiPrefix}/todo`, todoRouter);
+app.use(`/${apiPrefix}/journal`, journalRouter);
 
 export default app;
