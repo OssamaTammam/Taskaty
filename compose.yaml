@@ -11,10 +11,11 @@ services:
       - 3000:3000
     networks:
       - my-network
+    container_name: todo-api-container
 
   database:
     image: mysql:9.0.0
-    container_name: database
+    container_name: todo-db-container
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 12345
