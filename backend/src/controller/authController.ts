@@ -256,7 +256,7 @@ export const protectRoute = async (
       return resGenerator(res, 400, "fail", "No logged in user");
     }
 
-    authenticateRequest(user);
+    authenticateRequest(user)(req, res, next);
 
     next();
   } catch (err) {

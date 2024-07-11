@@ -4,7 +4,8 @@
   "main": "src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/server.ts"
+    "dev": "nodemon ./src/server.ts",
+    "debug": "ndb --on-port 9229 tsc && node --inspect-brk=9229 dist/server.js"
   },
   "author": "Ossama Tammam",
   "license": "ISC",

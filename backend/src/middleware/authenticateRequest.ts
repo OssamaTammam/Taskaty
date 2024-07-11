@@ -10,7 +10,6 @@ import { Request, Response, NextFunction } from "express";
 const authenticateRequest = (user: User) => {
   return (req: Request, res: Response, next: NextFunction) => {
     req.loggedInUser = user;
-    next();
   };
 };
 
