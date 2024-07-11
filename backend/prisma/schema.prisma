@@ -1,56 +1,55 @@
 datasource db {
     provider = "mysql"
-    url = env("DATABASE_URL")
+    url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 model User {
-    id Int @id @default(autoincrement())
-    username String @unique
-    email String @unique
+    id       Int     @id @default(autoincrement())
+    username String  @unique
+    email    String  @unique
     password String
-    jwt String?
-    days Day[]
+    jwt      String?
+    days     Day[]
 }
 
-model Day{
-    id Int @id @default(autoincrement())
-    date DateTime
-    isHoliday Boolean @default(false)
-    userId Int
-    user User @relation(fields:[userId],references: [id])
-    todos Todo[]
-    journals Journal[]
+model Day {
+    id        Int       @id @default(autoincrement())
+    date      DateTime
+    isHoliday Boolean   @default(false)
+    userId    Int
+    user      User      @relation(fields: [userId], references: [id])
+    todos     Todo[]
+    journals  Journal[]
 }
 
-enum Priority{
+enum Priority {
     LOW
     MEDIUM
     HIGH
 }
 
 model Todo {
-    id Int @id @default(autoincrement())
-    title String
+    id          Int       @id @default(autoincrement())
+    title       String
     description String?
-    priority Priority
-    completed Boolean @default(false)
+    priority    Priority
+    completed   Boolean   @default(false)
     completedAt DateTime?
-    createdAt DateTime @default(now())
-    updatedAt  DateTime  @updatedAt
-    dayId Int
-    day Day @relation(fields: [dayId], references: [id])
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    dayId       Int
+    day         Day       @relation(fields: [dayId], references: [id])
 }
 
-model Journal{
-    id Int @id @default(autoincrement())
-    content String
+model Journal {
+    id        Int      @id @default(autoincrement())
+    content   String
     createdAt DateTime @default(now())
-    updatedAt  DateTime  @updatedAt
-    dayId Int
-    day Day @relation(fields: [dayId], references: [id])
+    updatedAt DateTime @updatedAt
+    dayId     Int
+    day       Day      @relation(fields: [dayId], references: [id])
 }
-
