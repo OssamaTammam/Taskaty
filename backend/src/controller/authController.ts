@@ -9,7 +9,11 @@ import {
 import resGenerator from "../utils/resGenerator";
 import { User } from "@prisma/client";
 import { hashPassword, verifyPassword } from "../utils/auth/passwordHashing";
-import { createJWT } from "../utils/auth/tokens";
+import { createJWT, verifyJWT } from "../utils/auth/tokens";
+
+export interface AuthenticatedRequest extends Request {
+  user?: User | null;
+}
 
 /**
  * Handles user registration.
@@ -163,11 +167,63 @@ export const logIn = async (
  * @param res
  * @returns {void}
  */
-export const logOut = (req: Request, res: Response): void => {
-  res.cookie("jwt", "logged out", {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: false,
-  });
+export const logOut = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  try {
+    res.cookie("jwt", "logged out", {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: false,
+    });
 
-  return resGenerator(res, 200, "success", "logged out");
+    return resGenerator(res, 200, "success", "logged out");
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Protect the current route to only allow the logged in user to access it
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+export const protectRoute = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    let token: string;
+
+    if (req.cookies.jwt) {
+      token = req.cookies.jwt;
+    } else {
+      return resGenerator(res, 400, "fail", "You are not logged in");
+    }
+
+    const decoded = verifyJWT(token);
+
+    if (!decoded) {
+      return resGenerator(res, 400, "fail", "Invalid token");
+    }
+
+    const userId = decoded.userId;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    req.user = user;
+
+    next();
+  } catch (err) {
+    next(err);
+  }
 };
