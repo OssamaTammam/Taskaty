@@ -5,7 +5,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/server.ts",
-    "debug": "ndb --on-port 9229 tsc && node --inspect-brk=9229 dist/server.js"
+    "debug": "ndb --on-port 9229 tsc && node --inspect-brk=9229 dist/server.js",
+    "build": "tsc",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate deploy",
+    "start": "npm run prisma:generate && npm run prisma:migrate && npm run build && node dist/server.js"
   },
   "author": "Ossama Tammam",
   "license": "ISC",

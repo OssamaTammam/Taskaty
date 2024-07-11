@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - 3000:3000
+    networks:
+      - my-network
+    container_name: todo-api-container
+
+  database:
+    image: mysql:9.0.0
+    container_name: todo-db-container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: my_todo_app # Optional: Specify your database name if needed
+    volumes:
+      - ./db/scripts:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ] # Update to use 'database' instead of 'localhost'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  my-network:
+    driver: bridge
