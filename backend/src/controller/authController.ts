@@ -48,42 +48,6 @@ export const checkUserExits = async (
 };
 
 /**
- * @param email
- * @param username
- * @returns boolean that checks if the user exists as a registered user in the database
- */
-export const checkUserExits = async (
-  email: string,
-  username: string,
-): Promise<boolean> => {
-  try {
-    // check if username exists
-    if (
-      await prisma.user.findFirst({
-        where: {
-          username: username,
-        },
-      })
-    )
-      return true;
-
-    // check if email exists
-    if (
-      await prisma.user.findFirst({
-        where: {
-          email: email,
-        },
-      })
-    )
-      return true;
-
-    return false;
-  } catch (err) {
-    throw new Error("Error checking if user exits\n" + err);
-  }
-};
-
-/**
  * Handles user registration.
  *
  * 1. Checks if all necessary fields are not empty
