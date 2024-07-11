@@ -13,12 +13,19 @@ const resGenerator = (
   statusCode: number,
   status: string,
   message: string,
+  data?: Object,
 ): void => {
   try {
-    res.status(statusCode).json({
-      status,
-      message,
-    });
+    data
+      ? res.status(statusCode).json({
+          status,
+          message,
+          data,
+        })
+      : res.status(statusCode).json({
+          status,
+          message,
+        });
   } catch (err) {
     throw new Error("Couldn't send response\n" + err);
   }
