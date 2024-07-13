@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { logIn, logOut, signUp } from "../controller/authController";
+import {
+  isLoggedIn,
+  logIn,
+  logOut,
+  signUp,
+} from "../controller/authController";
 
 const authRouter: Router = Router();
 
@@ -7,5 +12,6 @@ const authRouter: Router = Router();
 authRouter.post("/signup", signUp);
 authRouter.post("/login", logIn);
 authRouter.get("/logout", logOut);
+authRouter.post("/isLoggedIn", isLoggedIn);
 
 export default authRouter;

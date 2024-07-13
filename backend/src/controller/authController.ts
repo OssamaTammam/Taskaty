@@ -263,3 +263,48 @@ export const protectRoute = async (
     next(err);
   }
 };
+
+/**
+ * Check if user is logged in based off jwt cookies
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+export const isLoggedIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    let token: string;
+
+    if (req.cookies.jwt) {
+      token = req.cookies.jwt;
+    } else {
+      return resGenerator(res, 400, "fail", "You are not logged in");
+    }
+
+    const decoded = verifyJWT(token);
+
+    if (!decoded) {
+      return resGenerator(res, 400, "fail", "Invalid token");
+    }
+
+    const userId: number = decoded.userId;
+
+    const user: User | null = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return resGenerator(res, 400, "fail", "No logged in user");
+    }
+
+    return resGenerator(res, 200, "success", "User is logged in");
+  } catch (err) {
+    next(err);
+  }
+};

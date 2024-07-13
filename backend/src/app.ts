@@ -1,5 +1,6 @@
 import express, { Express } from "express";
 import morgan from "morgan";
+import cors from "cors";
 import authRouter from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 import todoRouter from "./routes/todoRoutes";
@@ -9,6 +10,8 @@ import dayRouter from "./routes/dayRoutes";
 const app: Express = express();
 
 // Development Middleware
+
+app.use(cors());
 
 // Put data in the request body
 app.use(express.json());
