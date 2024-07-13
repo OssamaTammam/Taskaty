@@ -26,6 +26,10 @@ export const fetchDay = async (
           },
         },
       },
+      include: {
+        todos: true,
+        journals: true,
+      },
     });
 
     // Create the day if it doesn't exist
