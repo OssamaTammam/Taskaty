@@ -1,1 +1,1 @@
-CREATE DATABASE my_todo_app;
+CREATE DATABASE taskaty;

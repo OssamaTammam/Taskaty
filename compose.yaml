@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_DATABASE: my_todo_app # Optional: Specify your database name if needed
+      MYSQL_DATABASE: taskaty # Optional: Specify your database name if needed
     volumes:
       - ./db/scripts:/docker-entrypoint-initdb.d
     ports:

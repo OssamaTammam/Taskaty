@@ -18,6 +18,7 @@ model User {
 
 model Day {
     id        Int       @id @default(autoincrement())
+    date      String
     createdAt DateTime  @default(now())
     isHoliday Boolean   @default(false)
     userId    Int

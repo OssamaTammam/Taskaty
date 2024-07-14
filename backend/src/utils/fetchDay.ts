@@ -13,18 +13,13 @@ export const fetchDay = async (
   date: Date,
 ): Promise<Day> => {
   try {
-    const formattedDate = date.toISOString().split("T")[0];
+    const formattedDate: string = date.toISOString().split("T")[0];
 
     // Fetch the day if it exists
     let day: Day | null = await prisma.day.findFirst({
       where: {
         userId: loggedInUser.id,
-        AND: {
-          createdAt: {
-            gte: new Date(`${formattedDate}T00:00:00Z`),
-            lt: new Date(`${formattedDate}T23:59:59.999Z`),
-          },
-        },
+        date: formattedDate,
       },
       include: {
         todos: true,
@@ -32,12 +27,16 @@ export const fetchDay = async (
       },
     });
 
-    // Create the day if it doesn't exist
+    // If day doesn't exist, create a new one
     if (!day) {
       day = await prisma.day.create({
         data: {
-          createdAt: new Date(), // Ensure a new createdAt value is set
+          date: formattedDate, // Set the exact date and time for createdAt
           userId: loggedInUser.id,
+        },
+        include: {
+          todos: true,
+          journals: true,
         },
       });
     }

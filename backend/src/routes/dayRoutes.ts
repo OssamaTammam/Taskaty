@@ -6,6 +6,6 @@ const dayRouter: Router = Router();
 
 // Auth required
 dayRouter.use(protectRoute);
-dayRouter.route("").get(getDay).delete(deleteDay);
+dayRouter.route("").post(getDay).delete(deleteDay);
 
 export default dayRouter;
