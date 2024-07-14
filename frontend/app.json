@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Taskaty",
-    "slug": "Taskaty",
+    "slug": "taskaty",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.Taskaty"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f16132a5-b9f6-4d7e-871b-871ef93e83f6"
+      }
+    },
+    "owner": "ossamatammam"
   }
 }
