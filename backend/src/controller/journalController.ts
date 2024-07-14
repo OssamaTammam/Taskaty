@@ -25,7 +25,10 @@ export const addJournal = async (
     }
 
     const currDate: Date = new Date();
-    const day: Day = await fetchDay(req.loggedInUser, currDate);
+    const day: Day = await fetchDay(
+      req.loggedInUser,
+      req.body.date ? new Date(req.body.date) : currDate,
+    );
 
     const journalData: JournalData = {
       content: req.body.content,
@@ -99,26 +102,35 @@ export const updateJournal = async (
   next: NextFunction,
 ) => {
   try {
-    const day: Day | null = await prisma.day.findFirst({
-      where: {
-        id: req.body.dayId,
-      },
-    });
+    const { content, dayId } = req.body;
 
-    if (!day) {
-      return resGenerator(res, 400, "fail", "Day not found");
+    // Check if the day exists if dayId is provided
+    if (dayId) {
+      const day: Day | null = await prisma.day.findFirst({
+        where: { id: dayId },
+      });
+
+      if (!day) {
+        return resGenerator(res, 400, "fail", "Day not found");
+      }
     }
 
-    const journalData: JournalData = {
-      content: req.body.content,
-      day: { connect: { id: day.id } },
-    };
+    // Prepare update data
+    const updateData: Partial<JournalData> = {};
+
+    if (content) {
+      updateData.content = content;
+    }
+
+    if (dayId) {
+      updateData.day = { connect: { id: dayId } };
+    }
 
     const updatedJournalEntry: Journal = await prisma.journal.update({
       where: {
         id: parseInt(req.body.id, 10),
       },
-      data: journalData,
+      data: updateData,
     });
 
     return resGenerator(
@@ -129,10 +141,6 @@ export const updateJournal = async (
       updatedJournalEntry,
     );
   } catch (err) {
-    next(
-      new Error(
-        "Error updating Journal entry to current logged in user\n" + err,
-      ),
-    );
+    next(new Error("Error updating Journal entry\n" + err));
   }
 };

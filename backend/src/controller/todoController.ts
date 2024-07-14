@@ -26,7 +26,7 @@ export const addTodo = async (
 
     // Decide type of priority
     let priority: Priority | null;
-    switch (req.body.priority.toLowerCase()) {
+    switch (req.body.priority) {
       case "low":
         priority = Priority.LOW;
         break;
@@ -51,7 +51,10 @@ export const addTodo = async (
     }
 
     const currDate: Date = new Date();
-    const day: Day = await fetchDay(req.loggedInUser, currDate);
+    const day: Day = await fetchDay(
+      req.loggedInUser,
+      req.body.date ? new Date(req.body.date) : currDate,
+    );
 
     const todoData: TodoData = {
       title: req.body.title,
@@ -125,59 +128,54 @@ export const updateTodo = async (
   next: NextFunction,
 ) => {
   try {
-    // Decide type of priority
-    let priority: Priority | null;
-    switch (req.body.priority.toLowerCase()) {
-      case "low":
-        priority = Priority.LOW;
-        break;
-      case "medium":
-        priority = Priority.MEDIUM;
-        break;
-      case "high":
-        priority = Priority.HIGH;
-        break;
-      default:
-        priority = null;
-        break;
+    const { title, description, priority, completed, completedAt, dayId } =
+      req.body;
+
+    // Prepare update data
+    const updateData: Partial<TodoData> = {};
+
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
+
+    if (priority) {
+      switch (priority) {
+        case "low":
+          updateData.priority = Priority.LOW;
+          break;
+        case "medium":
+          updateData.priority = Priority.MEDIUM;
+          break;
+        case "high":
+          updateData.priority = Priority.HIGH;
+          break;
+        default:
+          return resGenerator(res, 400, "fail", "Invalid priority value");
+      }
     }
 
-    if (!priority) {
-      return resGenerator(
-        res,
-        400,
-        "fail",
-        `Priority Value cannot be ${priority}`,
-      );
+    if (dayId) {
+      const day: Day | null = await prisma.day.findFirst({
+        where: { id: dayId },
+      });
+
+      if (!day) {
+        return resGenerator(res, 400, "fail", "Day not found");
+      }
+      updateData.day = { connect: { id: day.id } };
     }
 
-    const day: Day | null = await prisma.day.findFirst({
-      where: {
-        id: req.body.dayId,
-      },
-    });
-
-    if (!day) {
-      return resGenerator(res, 400, "fail", "Day not found");
-    }
-
-    const todoData: TodoData = {
-      title: req.body.title,
-      description: req.body.description,
-      priority: priority,
-      day: { connect: { id: day.id } },
-    };
-
-    if (req.body.completed && req.body.completedAt) {
-      todoData.completed = req.body.completed;
-      todoData.completedAt = req.body.completedAt;
+    if (completed !== undefined) {
+      updateData.completed = completed;
+      if (completed && completedAt) {
+        updateData.completedAt = completedAt;
+      }
     }
 
     const updatedTodoEntry: Todo = await prisma.todo.update({
       where: {
         id: parseInt(req.body.id, 10),
       },
-      data: todoData,
+      data: updateData,
     });
 
     return resGenerator(
@@ -188,8 +186,6 @@ export const updateTodo = async (
       updatedTodoEntry,
     );
   } catch (err) {
-    next(
-      new Error("Error updating Todo entry to current logged in user\n" + err),
-    );
+    next(new Error("Error updating Todo entry\n" + err));
   }
 };
