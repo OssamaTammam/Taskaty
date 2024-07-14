@@ -34,7 +34,6 @@ const LoginScreen = ({ onSignUpPress, setIsLoggedIn }: LoginScreenProps) => {
       if (response.ok) {
         const data = await response.json();
 
-        // Get the Set-Cookie header
         const cookies = response.headers.get("Set-Cookie");
 
         // Find the jwt cookie
@@ -45,7 +44,7 @@ const LoginScreen = ({ onSignUpPress, setIsLoggedIn }: LoginScreenProps) => {
 
           if (jwtCookie) {
             // Extract the JWT value
-            const jwtValue = jwtCookie.split("=")[1].split(";")[0]; // Get the value of jwt cookie
+            const jwtValue = jwtCookie.split("=")[1].split(";")[0];
 
             // Store the jwt cookie in the context
             setJwt(jwtValue);

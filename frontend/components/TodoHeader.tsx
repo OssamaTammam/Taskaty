@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 const TodoHeader = ({
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#f8f8f8", // Background color
+    backgroundColor: "#f8f8f8",
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     borderRadius: 5,
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   buttonText: {
-    fontSize: 24, // Increased font size for button text
-    color: "#548CA8", // Button text color
+    fontSize: 24,
+    color: "#548CA8",
   },
   dateText: {
     fontSize: 18,
