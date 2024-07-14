@@ -9,50 +9,29 @@ const SignUpScreen = ({ onLoginPress }: { onLoginPress: () => void }) => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const { jwt, setJwt } = useAuth(); // Get setJwt from AuthContext
-
   const handleSubmit = async () => {
     // Basic validation
-    if (!email || !password) {
+    if (!email || !password || !username) {
       Alert.alert("Error", "Please enter both email and password.");
       return;
     }
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, username }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
-
-        // Get the Set-Cookie header
-        const cookies = response.headers.get("Set-Cookie");
-
-        // Find the jwt cookie
-        if (cookies) {
-          const jwtCookie = cookies
-            .split(";")
-            .find((cookie) => cookie.trim().startsWith("jwt="));
-
-          if (jwtCookie) {
-            // Extract the JWT value
-            const jwtValue = jwtCookie.split("=")[1].split(";")[0]; // Get the value of jwt cookie
-
-            // Store the jwt cookie in the context
-            setJwt(jwtValue);
-
-            console.log(jwt);
-          }
-        }
-
-        console.log(data);
+        Alert.alert("User created!", "Please login");
+        onLoginPress();
       } else {
-        Alert.alert("Error", "Login failed. Please check your credentials.");
+        Alert.alert("Error", data.message);
       }
     } catch (error) {
       console.error(error);

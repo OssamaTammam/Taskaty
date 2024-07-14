@@ -3,12 +3,17 @@ import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import DefaultButton from "./DefaultButton";
 import { API_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 
-const LoginScreen = ({ onSignUpPress }: { onSignUpPress: () => void }) => {
+interface LoginScreenProps {
+  onSignUpPress: () => void;
+  setIsLoggedIn: (value: boolean) => void;
+}
+
+const LoginScreen = ({ onSignUpPress, setIsLoggedIn }: LoginScreenProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { jwt, setJwt } = useAuth(); // Get setJwt from AuthContext
+  const { setJwt } = useAuth(); // Get setJwt from AuthContext
 
   const handleSubmit = async () => {
     // Basic validation
@@ -45,11 +50,11 @@ const LoginScreen = ({ onSignUpPress }: { onSignUpPress: () => void }) => {
             // Store the jwt cookie in the context
             setJwt(jwtValue);
 
-            console.log(jwt);
+            setIsLoggedIn(true);
+
+            router.push("TodoList");
           }
         }
-
-        console.log(data);
       } else {
         Alert.alert("Error", "Login failed. Please check your credentials.");
       }
